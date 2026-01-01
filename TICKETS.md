@@ -17,10 +17,10 @@
 
 ### Credentials (minimum required)
 3) A **Cloudflare API Token** (or willingness for me to guide you creating one) with least privileges, typically:
-   - Zone:Read
-   - DNS:Read
+   - Zone:Read (for `searle.dev`)
+   - DNS:Read (for `searle.dev`)
    - DNS:Edit (needed only when we start applying)
-   - (Optional later) Zone Settings:Read/Edit
+   - (Optional later) Zone Settings:Read/Edit (needed to inventory/manage zone settings; currently unauthorized)
 
 ### Remote state (Cloudflare R2)
 4) R2 details:

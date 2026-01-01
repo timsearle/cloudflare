@@ -12,11 +12,17 @@ Manage Cloudflare DNS configuration using Terraform with a GitHub Actions pipeli
 
 ## Phase 0 — Discovery + inventory (no Terraform changes yet)
 **Outcome:** we can prove what exists today and have a rollback reference.
-- Identify all Cloudflare zones in scope (e.g. `example.com`, `example.net`).
-- Export current DNS records + relevant zone settings (via API) into an *uncommitted* local snapshot.
+- Identify all Cloudflare zones in scope (e.g. `searle.dev`).
+- Export current DNS records (and zone metadata) via API into an *uncommitted* local snapshot.
+- Current `searle.dev` inventory snapshot (20260101T202906Z):
+  - 18 records total: A(4), CNAME(5), MX(2), NS(4), TXT(3)
+  - TTL is auto for all records (`ttl=1`)
+  - 5 proxied / 13 DNS-only
+  - DNSSEC: disabled
+- Zone settings export is currently **unauthorized** with our read token; if we later manage zone settings we’ll need **Zone Settings:Read** (and **Edit** only when applying).
 - Decide what is in-scope for Terraform initially:
-  - DNS records only? (A/AAAA/CNAME/TXT/MX/SRV/CAA)
-  - Zone settings (SSL/TLS, WAF, page rules, workers routes, etc.) — likely **later** unless required.
+  - DNS records only? (recommended first)
+  - Zone settings / page rules / workers routes etc. — later unless required
 
 ## Phase 1 — Repo scaffolding + credential model
 **Outcome:** we can run `terraform init/plan` locally in a safe way.
