@@ -11,3 +11,6 @@ Terraform + GitHub Actions management for Cloudflare DNS (migrating from click-o
 - [AGENTS.md](./AGENTS.md)
 - [roadmap.md](./roadmap.md)
 - [TICKETS.md](./TICKETS.md)
+
+## State backend
+- [docs/r2-backend.md](./docs/r2-backend.md)

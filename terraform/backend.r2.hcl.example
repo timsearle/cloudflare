@@ -1,0 +1,19 @@
+# Cloudflare R2 S3 backend configuration for Terraform.
+# Copy to terraform/backend.r2.hcl (which is gitignored) and fill in.
+#
+# Credentials are provided via environment variables:
+#   AWS_ACCESS_KEY_ID
+#   AWS_SECRET_ACCESS_KEY
+#
+# Create/obtain an R2 access key pair in the Cloudflare dashboard.
+
+bucket   = "<R2_BUCKET_NAME>"
+key      = "cloudflare/searle.dev/terraform.tfstate"
+region   = "auto"
+endpoint = "https://acd08a5a3f8cf8ffbbd67166a949bb96.r2.cloudflarestorage.com"
+
+# Required for R2 compatibility (avoid AWS-specific API calls)
+skip_credentials_validation = true
+skip_region_validation      = true
+skip_requesting_account_id  = true
+use_path_style              = true

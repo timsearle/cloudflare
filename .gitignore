@@ -20,6 +20,9 @@ terraform.rc
 # Local inventory snapshots (do not commit)
 /inventory/
 
+# Backend config (do not commit)
+/terraform/backend.r2.hcl
+
 # Environment / secrets
 .env
 .env.*
