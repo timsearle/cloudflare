@@ -15,5 +15,4 @@ endpoint = "https://acd08a5a3f8cf8ffbbd67166a949bb96.r2.cloudflarestorage.com"
 # Required for R2 compatibility (avoid AWS-specific API calls)
 skip_credentials_validation = true
 skip_region_validation      = true
-skip_requesting_account_id  = true
-use_path_style              = true
+force_path_style            = true

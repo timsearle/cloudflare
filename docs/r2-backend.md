@@ -22,7 +22,13 @@ We use Cloudflare R2 (S3-compatible) for Terraform remote state.
    ```bash
    export AWS_ACCESS_KEY_ID="..."
    export AWS_SECRET_ACCESS_KEY="..."
+
+   # R2 bucket region (discovered via `aws s3api head-bucket`)
+   export AWS_REGION="WEUR"
+   export AWS_DEFAULT_REGION="WEUR"
    ```
+
+   Note: once the backend is R2, you’ll need these env vars set for **every** `terraform plan/apply`.
 
 4) Migrate local state to R2:
    ```bash
