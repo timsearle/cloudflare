@@ -82,20 +82,20 @@ resource "cloudflare_dns_record" "record_9911aaac2c97540a994fd05c460b35be" {
 }
 
 resource "cloudflare_dns_record" "record_340938fb4464f72723b319a1f8c3e5f4" {
-  zone_id = var.zone_id
-  name    = "@"
-  type    = "MX"
-  content = "in1-smtp.messagingengine.com"
-  ttl     = 1
+  zone_id  = var.zone_id
+  name     = "@"
+  type     = "MX"
+  content  = "in1-smtp.messagingengine.com"
+  ttl      = 1
   priority = 10
 }
 
 resource "cloudflare_dns_record" "record_9a66ad1272524d755a80180efbe5c522" {
-  zone_id = var.zone_id
-  name    = "@"
-  type    = "MX"
-  content = "in2-smtp.messagingengine.com"
-  ttl     = 1
+  zone_id  = var.zone_id
+  name     = "@"
+  type     = "MX"
+  content  = "in2-smtp.messagingengine.com"
+  ttl      = 1
   priority = 20
 }
 
