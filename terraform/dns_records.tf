@@ -156,10 +156,9 @@ resource "cloudflare_dns_record" "record_d0292f742c068ba926b9c3b99aef2121" {
 }
 
 # Test record for validating PR plan/apply flow.
-# Note: `www` is a CNAME, so we can't add any additional records at `www` itself.
 resource "cloudflare_dns_record" "record_tf_test" {
   zone_id = var.zone_id
-  name    = "_tf-test.www"
+  name    = "@"
   type    = "TXT"
   content = "\"hello-from-terraform\""
   ttl     = 1
