@@ -26,7 +26,8 @@ We use Cloudflare R2 (S3-compatible) for Terraform remote state.
 
 4) Migrate local state to R2:
    ```bash
-   terraform -chdir=terraform init -migrate-state -backend-config=backend.r2.hcl
+   # NOTE: do NOT add -reconfigure here; Terraform errors if you combine it with -migrate-state.
+   terraform -chdir=terraform init -migrate-state -force-copy -backend-config=backend.r2.hcl
    ```
 
 5) Re-verify no-op plan:

@@ -9,7 +9,7 @@
 
 bucket   = "<R2_BUCKET_NAME>"
 key      = "cloudflare/searle.dev/terraform.tfstate"
-region   = "auto"
+region   = "WEUR"
 endpoint = "https://acd08a5a3f8cf8ffbbd67166a949bb96.r2.cloudflarestorage.com"
 
 # Required for R2 compatibility (avoid AWS-specific API calls)
