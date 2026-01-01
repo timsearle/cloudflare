@@ -17,6 +17,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Local inventory snapshots (do not commit)
+/inventory/
+
 # Environment / secrets
 .env
 .env.*
