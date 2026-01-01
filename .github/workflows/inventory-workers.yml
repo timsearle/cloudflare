@@ -1,0 +1,83 @@
+name: Inventory Cloudflare Workers
+
+on:
+  workflow_dispatch:
+    inputs:
+      script_name:
+        description: "Workers script name (e.g. empty-haze-02db)"
+        required: true
+        default: "empty-haze-02db"
+      zone_id:
+        description: "Zone ID to list worker routes for"
+        required: true
+        default: "ee4724648879ff94b352fe5587800062" # searle.dev
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update -y && sudo apt-get install -y jq
+
+      - name: Fetch workers inventory
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          SCRIPT_NAME: ${{ inputs.script_name }}
+          ZONE_ID: ${{ inputs.zone_id }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p inventory/workers
+
+          curl -sS \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            https://api.cloudflare.com/client/v4/accounts \
+            > inventory/accounts.json
+
+          ACCOUNT_ID=$(jq -r '.result[0].id' inventory/accounts.json)
+          echo "account_id=${ACCOUNT_ID}" | tee inventory/account_id.txt
+
+          curl -sS \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/scripts" \
+            > inventory/workers/scripts.json
+
+          curl -sS \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" \
+            > inventory/workers/routes-${ZONE_ID}.json
+
+          # Try to download the script content. Cloudflare's API can return raw script content.
+          # If this fails, we still keep the metadata JSON to help manual extraction.
+          curl -sS \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}" \
+            > "inventory/workers/${SCRIPT_NAME}.raw"
+
+          # If the raw file is JSON (starts with '{'), save it as metadata; otherwise treat as JS.
+          if head -c 1 "inventory/workers/${SCRIPT_NAME}.raw" | grep -q '{'; then
+            cp "inventory/workers/${SCRIPT_NAME}.raw" "inventory/workers/${SCRIPT_NAME}.json"
+            echo "NOTE: worker download returned JSON; script source may require /content endpoint" | tee -a inventory/workers/notes.txt
+            curl -sS \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/scripts/${SCRIPT_NAME}/content" \
+              > "inventory/workers/${SCRIPT_NAME}.js" || true
+          else
+            mv "inventory/workers/${SCRIPT_NAME}.raw" "inventory/workers/${SCRIPT_NAME}.js"
+          fi
+
+          ls -la inventory/workers
+
+      - name: Upload inventory artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-workers-inventory
+          path: inventory/
