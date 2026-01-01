@@ -26,8 +26,13 @@ Snapshots are written under `inventory/searle.dev/<timestamp>/` and are ignored 
 
 ## Notes / migration risks
 - **Zone settings inventory incomplete**: `GET /zones/:id/settings` returned `9109 Unauthorized`; if we want to manage zone settings later we’ll need a token with **Zone Settings:Read** (and **Edit** only when applying).
-- TTL “auto” handling: Cloudflare represents auto TTL as `1`; Terraform/provider normalization must match to avoid diffs.
+- TTL “auto” handling: Cloudflare represents auto TTL as `1`.
 - Proxied vs DNS-only: proxied state must be preserved per record.
-- NS records: ensure we don’t accidentally change the delegation-related records; they can be sensitive.
+- NS records: ensure we don’t accidentally change delegation-related records; they can be sensitive.
 - MX ordering: preserve priorities (currently `10` and `20`).
 - Record comments: if any records rely on comments, ensure import/provider support doesn’t cause drift.
+
+## Terraform adoption status (local)
+- Terraform provider pinned to Cloudflare provider **v5**.
+- `./scripts/cf-adopt-dns.sh` imports existing DNS records into **local** Terraform state and validates the result with `terraform plan`.
+- Result for snapshot `20260101T202906Z`: **No changes** (safe point to proceed to remote state bootstrap).
