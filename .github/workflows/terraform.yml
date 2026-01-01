@@ -1,0 +1,185 @@
+name: Terraform (Cloudflare DNS)
+
+on:
+  pull_request:
+    paths:
+      - "terraform/**"
+      - "scripts/**"
+      - ".github/workflows/terraform.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "terraform/**"
+      - "scripts/**"
+      - ".github/workflows/terraform.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: cloudflare-dns-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TF_IN_AUTOMATION: true
+  TF_INPUT: false
+  TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  AWS_EC2_METADATA_DISABLED: "true"
+
+  TFSTATE_BUCKET: terraform-state-cloudflare
+  TFSTATE_KEY: cloudflare/searle.dev/terraform.tfstate
+  R2_ENDPOINT: https://acd08a5a3f8cf8ffbbd67166a949bb96.r2.cloudflarestorage.com
+
+jobs:
+  pr_plan:
+    name: PR Plan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+          terraform_wrapper: false
+
+      - name: Terraform fmt
+        run: terraform -chdir=terraform fmt -check
+
+      - name: Terraform init
+        run: |
+          terraform -chdir=terraform init \
+            -reconfigure \
+            -backend-config="bucket=${TFSTATE_BUCKET}" \
+            -backend-config="key=${TFSTATE_KEY}" \
+            -backend-config="region=${AWS_REGION}" \
+            -backend-config="endpoint=${R2_ENDPOINT}" \
+            -backend-config="skip_credentials_validation=true" \
+            -backend-config="skip_region_validation=true" \
+            -backend-config="force_path_style=true"
+
+      - name: Terraform validate
+        run: terraform -chdir=terraform validate
+
+      - name: Terraform plan
+        run: |
+          terraform -chdir=terraform plan -no-color -out=tfplan
+          terraform -chdir=terraform show -no-color tfplan > tfplan.txt
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-pr-${{ github.event.pull_request.number }}
+          path: |
+            terraform/tfplan
+            terraform/tfplan.txt
+
+      - name: Comment plan on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const planText = fs.readFileSync('terraform/tfplan.txt', 'utf8');
+            const max = 60000;
+            const body = [
+              '## Terraform plan (Cloudflare DNS)',
+              '',
+              `Commit: ${context.payload.pull_request.head.sha}`,
+              '',
+              '<details><summary>Show plan</summary>',
+              '',
+              '```',
+              planText.slice(0, max),
+              planText.length > max ? '\n... (truncated)\n' : '',
+              '```',
+              '</details>',
+            ].join('\n');
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const marker = '<!-- tfplan-comment -->';
+            const fullBody = `${marker}\n${body}`;
+
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body: fullBody });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body: fullBody });
+            }
+
+  main_plan:
+    name: Main Plan
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+          terraform_wrapper: false
+
+      - name: Terraform init
+        run: |
+          terraform -chdir=terraform init \
+            -reconfigure \
+            -backend-config="bucket=${TFSTATE_BUCKET}" \
+            -backend-config="key=${TFSTATE_KEY}" \
+            -backend-config="region=${AWS_REGION}" \
+            -backend-config="endpoint=${R2_ENDPOINT}" \
+            -backend-config="skip_credentials_validation=true" \
+            -backend-config="skip_region_validation=true" \
+            -backend-config="force_path_style=true"
+
+      - name: Terraform plan (artifact)
+        run: |
+          terraform -chdir=terraform plan -no-color -out=tfplan
+          terraform -chdir=terraform show -no-color tfplan > tfplan.txt
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-main-${{ github.sha }}
+          path: |
+            terraform/tfplan
+            terraform/tfplan.txt
+
+  apply:
+    name: Apply (gated)
+    runs-on: ubuntu-latest
+    needs: [main_plan]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    environment: cloudflare-dns
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+          terraform_wrapper: false
+
+      - name: Download plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan-main-${{ github.sha }}
+          path: terraform
+
+      - name: Terraform init
+        run: |
+          terraform -chdir=terraform init \
+            -reconfigure \
+            -backend-config="bucket=${TFSTATE_BUCKET}" \
+            -backend-config="key=${TFSTATE_KEY}" \
+            -backend-config="region=${AWS_REGION}" \
+            -backend-config="endpoint=${R2_ENDPOINT}" \
+            -backend-config="skip_credentials_validation=true" \
+            -backend-config="skip_region_validation=true" \
+            -backend-config="force_path_style=true"
+
+      - name: Terraform apply (uses plan artifact)
+        run: terraform -chdir=terraform apply -no-color -auto-approve tfplan
