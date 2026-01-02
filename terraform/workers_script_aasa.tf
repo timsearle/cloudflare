@@ -16,14 +16,7 @@ resource "cloudflare_workers_script" "aasa" {
   main_module  = "empty-haze-02db.js"
   content_file = "${path.module}/workers/empty-haze-02db.js"
 
-  # Ensure changes to the script or the hosted well-known files trigger an update.
-  content_sha256 = sha256(
-    join("", [
-      filesha256("${path.module}/workers/empty-haze-02db.js"),
-      filesha256("${path.module}/workers/assets/.well-known/apple-app-site-association"),
-      filesha256("${path.module}/workers/assets/.well-known/atproto-did"),
-    ])
-  )
+  content_sha256 = filesha256("${path.module}/workers/empty-haze-02db.js")
 
   assets = {
     directory        = "${path.module}/workers/assets"
