@@ -1,6 +1,6 @@
 # Hand-authored DNS records / overrides.
 #
-# Keep generated records in dns_records.tf (regenerate via scripts/cf-generate-dns-tf.py).
+# Keep generated records in dns_records.tf (regenerate from Cloudflare only if needed).
 
 # Test record for validating PR plan/apply flow.
 resource "cloudflare_dns_record" "record_tf_test" {
