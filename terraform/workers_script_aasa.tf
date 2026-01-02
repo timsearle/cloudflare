@@ -1,6 +1,7 @@
-# Adopt the existing Worker script used for AASA responses.
+# Manage the existing Worker script used for AASA responses.
 #
-# This PR is import-only and intentionally avoids any in-place updates.
+# This step removes ignore_changes, so Terraform becomes the source of truth for the script content.
+# The provider will show an in-place update (Cloudflare metadata changes) even when content is identical.
 
 import {
   to = cloudflare_workers_script.aasa
@@ -33,6 +34,5 @@ resource "cloudflare_workers_script" "aasa" {
 
   lifecycle {
     prevent_destroy = true
-    ignore_changes  = all
   }
 }
