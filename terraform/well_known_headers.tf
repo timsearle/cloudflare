@@ -17,18 +17,16 @@ resource "cloudflare_ruleset" "well_known_content_types" {
       expression  = "(http.request.uri.path eq \"/.well-known/apple-app-site-association\")"
 
       action_parameters = {
-        headers = [
-          {
-            name      = "Content-Type"
+        headers = {
+          "Content-Type" = {
             operation = "set"
             value     = "application/json; charset=utf-8"
-          },
-          {
-            name      = "Content-Disposition"
+          }
+          "Content-Disposition" = {
             operation = "set"
             value     = "inline"
-          },
-        ]
+          }
+        }
       }
     },
     {
@@ -38,18 +36,16 @@ resource "cloudflare_ruleset" "well_known_content_types" {
       expression  = "(http.request.uri.path eq \"/.well-known/atproto-did\")"
 
       action_parameters = {
-        headers = [
-          {
-            name      = "Content-Type"
+        headers = {
+          "Content-Type" = {
             operation = "set"
             value     = "text/plain; charset=utf-8"
-          },
-          {
-            name      = "Content-Disposition"
+          }
+          "Content-Disposition" = {
             operation = "set"
             value     = "inline"
-          },
-        ]
+          }
+        }
       }
     },
   ]
