@@ -20,13 +20,17 @@ Migrate an existing Cloudflare DNS configuration from click-ops to IaC **without
 - Never commit:
   - Cloudflare API tokens
   - Cloudflare R2 access keys
-  - `*.tfstate*`, `.terraform/`, `.terraform.lock.hcl` (decision pending)
+  - `*.tfstate*`, `.terraform/`
+- Do commit:
+  - `.terraform.lock.hcl` (locks provider checksums for reproducible CI)
 - Prefer GitHub Actions Secrets for credentials.
 
 ### 3) Git hygiene
 - Small, atomic commits.
+- Always use pull requests (no direct pushes to `main`).
 - Before committing: `git status --porcelain` + `git diff` + `git diff --staged`.
 
-### 4) No implementation until plan review
-- Update `TICKETS.md` / `roadmap.md` first.
-- Do not create real Terraform resources or workflows until the plan is approved.
+### 4) Change management
+- Treat `terraform/` as the source of truth.
+- All changes go via PRs; the PR plan comment is the human review surface.
+- The CI blocks plans with deletes by default (no accidental destroy).

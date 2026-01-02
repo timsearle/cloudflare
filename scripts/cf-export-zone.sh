@@ -9,6 +9,11 @@ if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   exit 2
 fi
 
+if ! command -v jq >/dev/null 2>&1; then
+  echo "error: jq is required" >&2
+  exit 2
+fi
+
 api() {
   local path="$1"
   curl -sS "https://api.cloudflare.com/client/v4${path}" \
@@ -19,8 +24,7 @@ api() {
 mkdir -p "${OUT_DIR}"
 
 zone_id="$(
-  api "/zones?name=${ZONE_NAME}&status=active" \
-    | python3 -c 'import json,sys; d=json.load(sys.stdin); r=d.get("result") or []; print(r[0]["id"] if r else "")'
+  api "/zones?name=${ZONE_NAME}&status=active" | jq -r '.result[0].id // empty'
 )"
 
 if [[ -z "${zone_id}" ]]; then
@@ -43,16 +47,16 @@ while :; do
   resp="$(api "/zones/${zone_id}/dns_records?per_page=${per_page}&page=${page}")"
   echo "${resp}" > "${OUT_DIR}/dns-records.page-${page}.json"
 
-  chunk="$(echo "${resp}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(json.dumps(d.get("result") or []))')"
-  all_records="$(python3 -c 'import json,sys; a=json.loads(sys.argv[1]); b=json.loads(sys.argv[2]); print(json.dumps(a+b))' "${all_records}" "${chunk}")"
+  chunk="$(echo "${resp}" | jq -c '.result // []')"
+  all_records="$(jq -cs '.[0] + .[1]' <(echo "${all_records}") <(echo "${chunk}"))"
 
-  total_pages="$(echo "${resp}" | python3 -c 'import json,sys; d=json.load(sys.stdin); print((d.get("result_info") or {}).get("total_pages") or 1)')"
+  total_pages="$(echo "${resp}" | jq -r '.result_info.total_pages // 1')"
   if [[ "${page}" -ge "${total_pages}" ]]; then
     break
   fi
   page=$((page+1))
 done
 
-echo "${all_records}" | python3 -m json.tool > "${OUT_DIR}/dns-records.all.json"
+echo "${all_records}" | jq '.' > "${OUT_DIR}/dns-records.all.json"
 
 echo "Done." >&2

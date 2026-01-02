@@ -10,6 +10,11 @@ if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   exit 2
 fi
 
+if ! command -v jq >/dev/null 2>&1; then
+  echo "error: jq is required" >&2
+  exit 2
+fi
+
 if [[ -z "${INVENTORY_DIR}" ]]; then
   INVENTORY_DIR="$(ls -1dt "inventory/${ZONE_NAME}"/* | head -n1)"
 fi
@@ -20,7 +25,7 @@ if [[ ! -f "${RECORDS_JSON}" ]]; then
   exit 3
 fi
 
-echo "Importing records from ${INVENTORY_DIR}" >&2
+echo "Adopting records from ${INVENTORY_DIR}" >&2
 
 export TF_VAR_cloudflare_api_token="${CLOUDFLARE_API_TOKEN}"
 
@@ -30,17 +35,7 @@ while read -r addr import_id; do
   terraform -chdir=terraform import -input=false "${addr}" "${import_id}" >/dev/null
   echo "Imported ${addr}" >&2
 done < <(
-  python3 - <<'PY' "${RECORDS_JSON}" "${ZONE_ID}"
-import json, sys
-records_path, zone_id = sys.argv[1], sys.argv[2]
-with open(records_path) as f:
-    records = json.load(f)
-for r in records:
-    rid = r['id']
-    addr = f"cloudflare_dns_record.record_{rid}"
-    import_id = f"{zone_id}/{rid}"
-    print(addr + " " + import_id)
-PY
+  jq -r --arg zid "${ZONE_ID}" '.[] | "cloudflare_dns_record.record_\(.id) \($zid)/\(.id)"' "${RECORDS_JSON}"
 )
 
 echo "Running plan (expecting no changes)..." >&2

@@ -4,9 +4,15 @@
 Manage Cloudflare DNS configuration using Terraform with a GitHub Actions pipeline, with a **safe migration** from the existing click-ops setup.
 
 ## Guiding principles
-- **No change to live DNS during migration**: the first successful end-to-end run must result in a `terraform plan` showing **no changes**.
-- **Import, don’t recreate**: existing resources are imported into state.
-- **Apply is gated**: automatic planning on PRs; applies require explicit approval.
+- **Import, don’t recreate**: existing resources are adopted into Terraform state.
+- **Apply is gated**: PRs produce a reviewed plan; main applies are gated via GitHub Environments.
+- **Prefer non-destructive changes**: the CI blocks plans containing deletes by default.
+
+## Current status (2026-01-02)
+- Terraform state stored in **Cloudflare R2**.
+- `searle.dev` DNS records managed via Terraform.
+- AASA Worker script + routes managed via Terraform.
+- Post-deploy + nightly **E2E tests** verify the AASA endpoint.
 
 ---
 

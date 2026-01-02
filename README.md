@@ -3,14 +3,33 @@
 Terraform + GitHub Actions management for Cloudflare DNS (migrating from click-ops **without changing live DNS**).
 
 ## Project rules (non-negotiable)
-- **Zero-downtime / no DNS changes during migration**: the first `terraform apply` must be a no-op (or explicitly reviewed/approved deltas only).
-- **No secrets or state committed**: Cloudflare API tokens, R2 credentials, and any `*.tfstate` must never enter git (snapshots live under `inventory/` which is ignored).
-- **Plan-first workflow**: implementation starts only after `TICKETS.md` / `roadmap.md` are reviewed and agreed.
+- **No direct pushes to `main`**: all changes go through PRs.
+- **No secrets or state committed**: Cloudflare API tokens, R2 credentials, and any `*.tfstate` must never enter git.
+- **Plan-first workflow**: PRs generate a plan and comment it on the PR; merge-to-main applies the exact plan artifact produced on `main`.
 
-## Planning docs
+## Docs
 - [AGENTS.md](./AGENTS.md)
 - [roadmap.md](./roadmap.md)
-- [TICKETS.md](./TICKETS.md)
+- [docs/r2-backend.md](./docs/r2-backend.md)
+
+## GitHub Actions
+- `Terraform (Cloudflare DNS)`
+  - PRs: fmt/validate/plan + PR comment
+  - main: plan artifact then apply that exact artifact (gated via GitHub Environment `cloudflare-dns`)
+- `Tests (E2E)`
+  - nightly at 03:00 UTC
+  - post-apply signal (runs only after a successful Terraform run on `main`)
+
+## Required GitHub secrets
+- `CLOUDFLARE_API_TOKEN`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION` (e.g. `WEUR`)
 
 ## State backend
 - [docs/r2-backend.md](./docs/r2-backend.md)
+
+## Making changes
+- Edit Terraform under `terraform/`.
+- Open a PR and review the posted plan comment.
+- Merge to `main` to apply (gated by the `cloudflare-dns` environment).

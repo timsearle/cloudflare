@@ -67,6 +67,10 @@ def main() -> None:
             lines.append(f'  proxied = {str(bool(proxied)).lower()}')
         if comment:
             lines.append(f'  comment = {hcl_string(comment)}')
+
+        lines.append('  lifecycle {')
+        lines.append('    prevent_destroy = true')
+        lines.append('  }')
         lines.append('}')
         lines.append('')
 
