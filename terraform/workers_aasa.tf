@@ -37,3 +37,24 @@ resource "cloudflare_workers_route" "aasa_root" {
     prevent_destroy = true
   }
 }
+
+# atproto DID (Bluesky handle verification)
+resource "cloudflare_workers_route" "atproto_wildcard" {
+  zone_id = var.zone_id
+  pattern = "*.${var.zone_name}/.well-known/atproto-did"
+  script  = "empty-haze-02db"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "cloudflare_workers_route" "atproto_root" {
+  zone_id = var.zone_id
+  pattern = "${var.zone_name}/.well-known/atproto-did"
+  script  = "empty-haze-02db"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
