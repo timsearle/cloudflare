@@ -12,3 +12,4 @@ variable "zone_name" {
   type    = string
   default = "searle.dev"
 }
+
