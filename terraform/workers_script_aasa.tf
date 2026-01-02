@@ -13,9 +13,16 @@ resource "cloudflare_workers_script" "aasa" {
   script_name = "empty-haze-02db"
 
   # Module-syntax worker (supports `export default`).
-  main_module    = "empty-haze-02db.js"
-  content_file   = "${path.module}/workers/empty-haze-02db.js"
+  main_module  = "empty-haze-02db.js"
+  content_file = "${path.module}/workers/empty-haze-02db.js"
+
   content_sha256 = filesha256("${path.module}/workers/empty-haze-02db.js")
+
+  assets = {
+    directory        = "${path.module}/workers/assets"
+    binding          = "ASSETS"
+    run_worker_first = true
+  }
 
   bindings = []
 
