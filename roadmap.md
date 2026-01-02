@@ -11,8 +11,10 @@ Manage Cloudflare DNS configuration using Terraform with a GitHub Actions pipeli
 ## Current status (2026-01-02)
 - Terraform state stored in **Cloudflare R2**.
 - `searle.dev` DNS records managed via Terraform.
-- AASA Worker script + routes managed via Terraform.
-- Post-deploy + nightly **E2E tests** verify the AASA endpoint.
+- `.well-known` static content served via **Worker + KV** (AASA, atproto-did).
+- Post-deploy + nightly **E2E tests** verify endpoints and Content-Types.
+
+**Migration complete.** All phases finished.
 
 ---
 
