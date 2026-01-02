@@ -14,17 +14,17 @@
 
 import {
   to = cloudflare_workers_script.aasa
-  id = "${var.account_id}/empty-haze-02db"
+  id = "acd08a5a3f8cf8ffbbd67166a949bb96/empty-haze-02db"
 }
 
 import {
   to = cloudflare_workers_route.aasa_wildcard
-  id = "${var.zone_id}/036762556b394f6391ed3e799ffbbedd"
+  id = "ee4724648879ff94b352fe5587800062/036762556b394f6391ed3e799ffbbedd"
 }
 
 import {
   to = cloudflare_workers_route.aasa_root
-  id = "${var.zone_id}/6a9e06e85ad54c66aeae7177f199f014"
+  id = "ee4724648879ff94b352fe5587800062/6a9e06e85ad54c66aeae7177f199f014"
 }
 
 resource "cloudflare_workers_script" "aasa" {
