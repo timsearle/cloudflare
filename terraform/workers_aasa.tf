@@ -20,7 +20,7 @@ import {
 
 resource "cloudflare_workers_route" "aasa_wildcard" {
   zone_id = var.zone_id
-  pattern = "*.${var.zone_name}/.well-known/apple-app-site-association"
+  pattern = "*.${var.zone_name}/.well-known/apple-app-site-association*"
   script  = "empty-haze-02db"
 
   lifecycle {
@@ -30,7 +30,7 @@ resource "cloudflare_workers_route" "aasa_wildcard" {
 
 resource "cloudflare_workers_route" "aasa_root" {
   zone_id = var.zone_id
-  pattern = "${var.zone_name}/.well-known/apple-app-site-association"
+  pattern = "${var.zone_name}/.well-known/apple-app-site-association*"
   script  = "empty-haze-02db"
 
   lifecycle {
@@ -41,7 +41,7 @@ resource "cloudflare_workers_route" "aasa_root" {
 # atproto DID (Bluesky handle verification)
 resource "cloudflare_workers_route" "atproto_wildcard" {
   zone_id = var.zone_id
-  pattern = "*.${var.zone_name}/.well-known/atproto-did"
+  pattern = "*.${var.zone_name}/.well-known/atproto-did*"
   script  = "empty-haze-02db"
 
   lifecycle {
@@ -51,7 +51,7 @@ resource "cloudflare_workers_route" "atproto_wildcard" {
 
 resource "cloudflare_workers_route" "atproto_root" {
   zone_id = var.zone_id
-  pattern = "${var.zone_name}/.well-known/atproto-did"
+  pattern = "${var.zone_name}/.well-known/atproto-did*"
   script  = "empty-haze-02db"
 
   lifecycle {
