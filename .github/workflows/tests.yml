@@ -1,0 +1,37 @@
+name: Tests (E2E)
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # nightly at 03:00 UTC
+  workflow_run:
+    workflows: ["Terraform (Cloudflare DNS)"]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  e2e_post_apply:
+    name: E2E
+    runs-on: ubuntu-latest
+
+    # Run nightly, or after a successful Terraform workflow run on main.
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Run E2E scripts
+        run: |
+          set -euo pipefail
+          for test in tests/e2e/*.sh; do
+            echo "Running $test"
+            "$test"
+          done

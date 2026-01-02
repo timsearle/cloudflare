@@ -14,8 +14,6 @@ on:
       - "scripts/**"
       - "tests/**"
       - ".github/workflows/terraform.yml"
-  schedule:
-    - cron: "0 3 * * *" # nightly at 03:00 UTC
   workflow_dispatch: {}
 
 permissions:
@@ -188,31 +186,3 @@ jobs:
       - name: Terraform apply (uses plan artifact)
         run: terraform -chdir=terraform apply -no-color -auto-approve tfplan
 
-  e2e_main:
-    name: E2E (post-apply)
-    runs-on: ubuntu-latest
-    needs: [apply]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run E2E checks
-        run: |
-          set -euo pipefail
-          for test in tests/e2e/*.sh; do
-            echo "Running $test"
-            "$test"
-          done
-
-  e2e_nightly:
-    name: E2E (nightly)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run E2E checks
-        run: |
-          set -euo pipefail
-          for test in tests/e2e/*.sh; do
-            echo "Running $test"
-            "$test"
-          done
