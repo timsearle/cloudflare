@@ -46,8 +46,6 @@ resource "cloudflare_workers_route" "aasa_wildcard" {
   pattern = "*.${var.zone_name}/.well-known/apple-app-site-association"
   script  = cloudflare_workers_script.aasa.script_name
 
-  request_limit_fail_open = false
-
   lifecycle {
     prevent_destroy = true
   }
@@ -57,8 +55,6 @@ resource "cloudflare_workers_route" "aasa_root" {
   zone_id = var.zone_id
   pattern = "${var.zone_name}/.well-known/apple-app-site-association"
   script  = cloudflare_workers_script.aasa.script_name
-
-  request_limit_fail_open = false
 
   lifecycle {
     prevent_destroy = true
