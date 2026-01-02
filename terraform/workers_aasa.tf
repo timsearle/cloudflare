@@ -28,8 +28,8 @@ import {
 }
 
 resource "cloudflare_workers_script" "aasa" {
-  account_id = var.account_id
-  name       = "empty-haze-02db"
+  account_id  = var.account_id
+  script_name = "empty-haze-02db"
 
   # Placeholder until we can safely fetch the exact script content via API.
   # We ignore changes to avoid unintended updates during adoption.
@@ -44,7 +44,7 @@ resource "cloudflare_workers_script" "aasa" {
 resource "cloudflare_workers_route" "aasa_wildcard" {
   zone_id = var.zone_id
   pattern = "*.${var.zone_name}/.well-known/apple-app-site-association"
-  script  = cloudflare_workers_script.aasa.name
+  script  = cloudflare_workers_script.aasa.script_name
 
   request_limit_fail_open = false
 
@@ -56,7 +56,7 @@ resource "cloudflare_workers_route" "aasa_wildcard" {
 resource "cloudflare_workers_route" "aasa_root" {
   zone_id = var.zone_id
   pattern = "${var.zone_name}/.well-known/apple-app-site-association"
-  script  = cloudflare_workers_script.aasa.name
+  script  = cloudflare_workers_script.aasa.script_name
 
   request_limit_fail_open = false
 
