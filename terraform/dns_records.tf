@@ -7,6 +7,9 @@ resource "cloudflare_dns_record" "record_3756d4f7f734056ac1009e674eecbda6" {
   content = "185.199.109.153"
   ttl     = 1
   proxied = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_590866fa031d53720f124eb9617f4949" {
@@ -16,6 +19,9 @@ resource "cloudflare_dns_record" "record_590866fa031d53720f124eb9617f4949" {
   content = "185.199.108.153"
   ttl     = 1
   proxied = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_7ed3a3b25c5582b8a39d1d7eda6e15dd" {
@@ -25,6 +31,9 @@ resource "cloudflare_dns_record" "record_7ed3a3b25c5582b8a39d1d7eda6e15dd" {
   content = "185.199.111.153"
   ttl     = 1
   proxied = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_9fd9116d849dcadcc5338848ca42f16d" {
@@ -34,6 +43,9 @@ resource "cloudflare_dns_record" "record_9fd9116d849dcadcc5338848ca42f16d" {
   content = "185.199.110.153"
   ttl     = 1
   proxied = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_08238491ef75d8de055648a639152d68" {
@@ -43,6 +55,9 @@ resource "cloudflare_dns_record" "record_08238491ef75d8de055648a639152d68" {
   content = "_domainconnect.1and1.com"
   ttl     = 1
   proxied = false
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_ad14d1be2b57a710a7b1178232fa3054" {
@@ -52,6 +67,9 @@ resource "cloudflare_dns_record" "record_ad14d1be2b57a710a7b1178232fa3054" {
   content = "fm1.searle.dev.dkim.fmhosted.com"
   ttl     = 1
   proxied = false
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_df073047af2b39710b3147587dbfd46b" {
@@ -61,6 +79,9 @@ resource "cloudflare_dns_record" "record_df073047af2b39710b3147587dbfd46b" {
   content = "fm2.searle.dev.dkim.fmhosted.com"
   ttl     = 1
   proxied = false
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_fc65103cd8ebf4b8575eb4dcdab8b38e" {
@@ -70,6 +91,9 @@ resource "cloudflare_dns_record" "record_fc65103cd8ebf4b8575eb4dcdab8b38e" {
   content = "fm3.searle.dev.dkim.fmhosted.com"
   ttl     = 1
   proxied = false
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_9911aaac2c97540a994fd05c460b35be" {
@@ -79,6 +103,9 @@ resource "cloudflare_dns_record" "record_9911aaac2c97540a994fd05c460b35be" {
   content = "timsearle.github.io"
   ttl     = 1
   proxied = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_340938fb4464f72723b319a1f8c3e5f4" {
@@ -88,6 +115,9 @@ resource "cloudflare_dns_record" "record_340938fb4464f72723b319a1f8c3e5f4" {
   content  = "in1-smtp.messagingengine.com"
   ttl      = 1
   priority = 10
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_9a66ad1272524d755a80180efbe5c522" {
@@ -97,6 +127,9 @@ resource "cloudflare_dns_record" "record_9a66ad1272524d755a80180efbe5c522" {
   content  = "in2-smtp.messagingengine.com"
   ttl      = 1
   priority = 20
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_248ee8ed564a30720866bfa524332a22" {
@@ -105,6 +138,9 @@ resource "cloudflare_dns_record" "record_248ee8ed564a30720866bfa524332a22" {
   type    = "NS"
   content = "ns1064.ui-dns.com"
   ttl     = 1
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_4965fa316050dcbd308fa464a7cc79a5" {
@@ -113,6 +149,9 @@ resource "cloudflare_dns_record" "record_4965fa316050dcbd308fa464a7cc79a5" {
   type    = "NS"
   content = "ns1072.ui-dns.de"
   ttl     = 1
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_54418e661f223185f2da9a7f18e114ba" {
@@ -121,6 +160,9 @@ resource "cloudflare_dns_record" "record_54418e661f223185f2da9a7f18e114ba" {
   type    = "NS"
   content = "ns1038.ui-dns.org"
   ttl     = 1
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_5d98180d12d167fbdac033b41d4c7127" {
@@ -129,6 +171,9 @@ resource "cloudflare_dns_record" "record_5d98180d12d167fbdac033b41d4c7127" {
   type    = "NS"
   content = "ns1054.ui-dns.biz"
   ttl     = 1
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_57b761f5a335c770da9db68dde6f0b77" {
@@ -137,6 +182,9 @@ resource "cloudflare_dns_record" "record_57b761f5a335c770da9db68dde6f0b77" {
   type    = "TXT"
   content = "\"v=DMARC1; p=none; rua=mailto:72c809d177a64dc185420e667fe85165@dmarc-reports.cloudflare.net\""
   ttl     = 1
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_999029c22059c401dc7903f75a38d81e" {
@@ -145,6 +193,9 @@ resource "cloudflare_dns_record" "record_999029c22059c401dc7903f75a38d81e" {
   type    = "TXT"
   content = "\"v=spf1 include:spf.messagingengine.com ?all\""
   ttl     = 1
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "record_d0292f742c068ba926b9c3b99aef2121" {
@@ -153,13 +204,8 @@ resource "cloudflare_dns_record" "record_d0292f742c068ba926b9c3b99aef2121" {
   type    = "TXT"
   content = "\"openai-domain-verification=dv-HKbilf33JN3wwBUEeIyISWGr\""
   ttl     = 1
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
-# Test record for validating PR plan/apply flow.
-resource "cloudflare_dns_record" "record_tf_test" {
-  zone_id = var.zone_id
-  name    = "@"
-  type    = "TXT"
-  content = "\"hello-from-terraform\""
-  ttl     = 1
-}

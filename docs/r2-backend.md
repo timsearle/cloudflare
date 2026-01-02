@@ -3,6 +3,8 @@
 We use Cloudflare R2 (S3-compatible) for Terraform remote state.
 
 ## Prerequisites
+- Terraform
+- `jq`
 - An R2 bucket dedicated to Terraform state (recommended: separate from other data).
 - An R2 access key pair (Access Key ID + Secret Access Key) with permissions to read/write objects in that bucket.
 

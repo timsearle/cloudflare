@@ -3,6 +3,8 @@
 This document is generated/maintained from a read-only export of the live zone to support a **no-change** Terraform import.
 
 ## How to refresh the snapshot (local; not committed)
+Prereqs: `jq`
+
 Create a **read-only** Cloudflare API token and run:
 
 ```bash

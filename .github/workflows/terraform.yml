@@ -72,6 +72,11 @@ jobs:
         run: |
           terraform -chdir=terraform plan -no-color -out=tfplan
           terraform -chdir=terraform show -no-color tfplan > terraform/tfplan.txt
+          terraform -chdir=terraform show -json tfplan > terraform/tfplan.json
+
+      - name: Block destructive plan
+        run: |
+          jq -e '([.resource_changes[]?.change.actions[]] | any(. == "delete" or . == "delete_create")) | not' terraform/tfplan.json >/dev/null
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
@@ -80,6 +85,7 @@ jobs:
           path: |
             terraform/tfplan
             terraform/tfplan.txt
+            terraform/tfplan.json
 
       - name: Comment plan on PR
         uses: actions/github-script@v7
@@ -143,6 +149,11 @@ jobs:
         run: |
           terraform -chdir=terraform plan -no-color -out=tfplan
           terraform -chdir=terraform show -no-color tfplan > terraform/tfplan.txt
+          terraform -chdir=terraform show -json tfplan > terraform/tfplan.json
+
+      - name: Block destructive plan
+        run: |
+          jq -e '([.resource_changes[]?.change.actions[]] | any(. == "delete" or . == "delete_create")) | not' terraform/tfplan.json >/dev/null
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
@@ -151,6 +162,7 @@ jobs:
           path: |
             terraform/tfplan
             terraform/tfplan.txt
+            terraform/tfplan.json
 
   apply:
     name: Apply (from plan artifact)
