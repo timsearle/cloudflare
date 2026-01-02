@@ -133,7 +133,7 @@ jobs:
             }
 
       - name: Upload plan artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tfplan-pr-${{ github.event.pull_request.number }}
           path: |
@@ -218,7 +218,7 @@ jobs:
           echo "Destructive plan: ${DESTRUCTIVE_PLAN}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload plan artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tfplan-main-${{ github.sha }}
           path: |
@@ -240,7 +240,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Download plan artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: tfplan-main-${{ github.sha }}
           path: terraform
