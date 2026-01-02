@@ -11,7 +11,6 @@ Terraform + GitHub Actions management for Cloudflare DNS (migrating from click-o
 - [AGENTS.md](./AGENTS.md)
 - [roadmap.md](./roadmap.md)
 - [docs/r2-backend.md](./docs/r2-backend.md)
-- [docs/searle.dev.md](./docs/searle.dev.md)
 
 ## GitHub Actions
 - `Terraform (Cloudflare DNS)`
