@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
@@ -84,7 +84,7 @@ jobs:
 
       - name: Flag destructive plan (requires manual acknowledgement)
         if: env.DESTRUCTIVE_PLAN == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -118,7 +118,7 @@ jobs:
 
       - name: Require acknowledgement for destructive plan
         if: env.DESTRUCTIVE_PLAN == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -131,7 +131,7 @@ jobs:
             }
 
       - name: Upload plan artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tfplan-pr-${{ github.event.pull_request.number }}
           path: |
@@ -140,7 +140,7 @@ jobs:
             terraform/tfplan.json
 
       - name: Comment plan on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
@@ -179,7 +179,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
@@ -216,7 +216,7 @@ jobs:
           echo "Destructive plan: ${DESTRUCTIVE_PLAN}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload plan artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tfplan-main-${{ github.sha }}
           path: |
@@ -231,14 +231,14 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: cloudflare-dns
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
           terraform_wrapper: false
 
       - name: Download plan artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: tfplan-main-${{ github.sha }}
           path: terraform
