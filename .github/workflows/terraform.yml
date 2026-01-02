@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
@@ -181,7 +181,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
@@ -233,7 +233,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: cloudflare-dns
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
