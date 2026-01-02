@@ -24,13 +24,13 @@ for URL in "${URLS[@]}"; do
     exit 1
   fi
 
-  python3 - <<PY
-import json
-from pathlib import Path
-p=Path("$body")
-json.loads(p.read_text())
-print("JSON OK")
-PY
+  if ! jq -e . "$body" >/dev/null; then
+    echo "Response body is not valid JSON"
+    head -c 400 "$body" | cat
+    exit 1
+  fi
+
+  echo "JSON OK"
 
   rm -f "$headers" "$body"
 done
