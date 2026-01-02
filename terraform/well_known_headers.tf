@@ -11,7 +11,7 @@ resource "cloudflare_ruleset" "well_known_content_types" {
 
   rules = [
     {
-      action      = "set_http_response_header"
+      action      = "rewrite"
       description = "Set Content-Type for AASA"
       enabled     = true
       expression  = "(http.request.uri.path eq \"/.well-known/apple-app-site-association\")"
@@ -30,7 +30,7 @@ resource "cloudflare_ruleset" "well_known_content_types" {
       }
     },
     {
-      action      = "set_http_response_header"
+      action      = "rewrite"
       description = "Set Content-Type for atproto DID"
       enabled     = true
       expression  = "(http.request.uri.path eq \"/.well-known/atproto-did\")"
