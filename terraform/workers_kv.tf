@@ -9,17 +9,19 @@ resource "cloudflare_workers_kv_namespace" "well_known" {
 }
 
 # Apple App Site Association (AASA) file
+# Key uses simple name (no slashes) to avoid provider URL-encoding bug
 resource "cloudflare_workers_kv" "aasa" {
   account_id   = "acd08a5a3f8cf8ffbbd67166a949bb96"
   namespace_id = cloudflare_workers_kv_namespace.well_known.id
-  key_name     = "/.well-known/apple-app-site-association"
+  key_name     = "apple-app-site-association"
   value        = file("${path.module}/workers/assets/.well-known/apple-app-site-association")
 }
 
 # atproto DID (Bluesky handle verification)
+# Key uses simple name (no slashes) to avoid provider URL-encoding bug
 resource "cloudflare_workers_kv" "atproto_did" {
   account_id   = "acd08a5a3f8cf8ffbbd67166a949bb96"
   namespace_id = cloudflare_workers_kv_namespace.well_known.id
-  key_name     = "/.well-known/atproto-did"
+  key_name     = "atproto-did"
   value        = file("${path.module}/workers/assets/.well-known/atproto-did")
 }

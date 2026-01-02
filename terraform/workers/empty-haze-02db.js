@@ -2,9 +2,18 @@ export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
 
-    // Look up content from KV store
-    const content = await env.WELL_KNOWN.get(pathname);
+    // Map URL paths to KV keys (KV keys avoid slashes due to provider bug)
+    const keyMap = {
+      "/.well-known/apple-app-site-association": "apple-app-site-association",
+      "/.well-known/atproto-did": "atproto-did",
+    };
 
+    const kvKey = keyMap[pathname];
+    if (!kvKey) {
+      return new Response("Not Found", { status: 404 });
+    }
+
+    const content = await env.WELL_KNOWN.get(kvKey);
     if (content === null) {
       return new Response("Not Found", { status: 404 });
     }
