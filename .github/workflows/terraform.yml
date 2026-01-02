@@ -5,12 +5,14 @@ on:
     paths:
       - "terraform/**"
       - "scripts/**"
+      - "tests/**"
       - ".github/workflows/terraform.yml"
   push:
     branches: ["main"]
     paths:
       - "terraform/**"
       - "scripts/**"
+      - "tests/**"
       - ".github/workflows/terraform.yml"
   workflow_dispatch: {}
 
@@ -183,3 +185,4 @@ jobs:
 
       - name: Terraform apply (uses plan artifact)
         run: terraform -chdir=terraform apply -no-color -auto-approve tfplan
+
