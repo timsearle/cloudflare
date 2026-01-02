@@ -86,7 +86,7 @@ jobs:
 
       - name: Flag destructive plan (requires manual acknowledgement)
         if: env.DESTRUCTIVE_PLAN == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -120,7 +120,7 @@ jobs:
 
       - name: Require acknowledgement for destructive plan
         if: env.DESTRUCTIVE_PLAN == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -142,7 +142,7 @@ jobs:
             terraform/tfplan.json
 
       - name: Comment plan on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
