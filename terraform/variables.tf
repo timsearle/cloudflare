@@ -13,7 +13,3 @@ variable "zone_name" {
   default = "searle.dev"
 }
 
-variable "account_id" {
-  type    = string
-  default = "acd08a5a3f8cf8ffbbd67166a949bb96"
-}
