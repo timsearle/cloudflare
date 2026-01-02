@@ -29,9 +29,46 @@ jobs:
           ref: main
 
       - name: Run E2E scripts
+        id: run_e2e
         run: |
           set -euo pipefail
+
+          mkdir -p e2e-results
+          failures=0
+
+          echo "| Test | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ---- | ------ |" >> "$GITHUB_STEP_SUMMARY"
+
+          shopt -s nullglob
           for test in tests/e2e/*.sh; do
+            name=$(basename "$test")
+            log="e2e-results/${name}.log"
+
             echo "Running $test"
-            "$test"
+            set +e
+            "$test" >"$log" 2>&1
+            ec=$?
+            set -e
+
+            if [[ $ec -eq 0 ]]; then
+              echo "${name}: PASS" > "e2e-results/${name}.status"
+              echo "| ${name} | PASS |" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "${name}: FAIL (exit ${ec})" > "e2e-results/${name}.status"
+              echo "| ${name} | FAIL (exit ${ec}) |" >> "$GITHUB_STEP_SUMMARY"
+              failures=$((failures+1))
+            fi
           done
+
+          if [[ $failures -ne 0 ]]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "${failures} E2E test(s) failed." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+      - name: Upload E2E results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results-${{ github.run_id }}
+          path: e2e-results
