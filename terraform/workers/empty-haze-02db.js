@@ -10,12 +10,15 @@ export default {
 
     const headers = new Headers(res.headers);
 
-    if (pathname === "/.well-known/apple-app-site-association") {
+    // Diagnostic header to prove the Worker executed (can be removed once stable).
+    headers.set("X-Well-Known-Worker", "1");
+
+    if (pathname.startsWith("/.well-known/apple-app-site-association")) {
       headers.set("Content-Type", "application/json; charset=utf-8");
       headers.set("Content-Disposition", "inline");
     }
 
-    if (pathname === "/.well-known/atproto-did") {
+    if (pathname.startsWith("/.well-known/atproto-did")) {
       headers.set("Content-Type", "text/plain; charset=utf-8");
       headers.set("Content-Disposition", "inline");
     }
