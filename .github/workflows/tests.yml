@@ -16,9 +16,10 @@ jobs:
     name: E2E
     runs-on: ubuntu-latest
 
-    # Run nightly, or after a successful Terraform workflow run on main.
+    # Run nightly, after a successful Terraform workflow run on main, or manually.
     if: |
       github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' &&
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
@@ -26,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Run E2E scripts
         id: run_e2e
