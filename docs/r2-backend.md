@@ -9,40 +9,34 @@ We use Cloudflare R2 (S3-compatible) for Terraform remote state.
 - An R2 access key pair (Access Key ID + Secret Access Key) with permissions to read/write objects in that bucket.
 
 ## Local bootstrap (safe workflow)
-1) Ensure local adoption is no-op:
-   ```bash
-   ./scripts/cf-adopt-dns.sh
-   ```
-   This should print `No changes`.
 
-2) Create `terraform/backend.r2.hcl` from the example:
-   ```bash
-   cp terraform/backend.r2.hcl.example terraform/backend.r2.hcl
-   ```
+1) Create `terraform/backend.r2.hcl` from the example:
 
-3) Export R2 credentials (do not commit):
-   ```bash
-   export AWS_ACCESS_KEY_ID="..."
-   export AWS_SECRET_ACCESS_KEY="..."
+```bash
+cp terraform/backend.r2.hcl.example terraform/backend.r2.hcl
+```
 
-   # R2 bucket region (discovered via `aws s3api head-bucket`)
-   export AWS_REGION="WEUR"
-   export AWS_DEFAULT_REGION="WEUR"
-   ```
+2) Export R2 credentials (do not commit):
 
-   Note: once the backend is R2, you’ll need these env vars set for **every** `terraform plan/apply`.
+```bash
+export AWS_ACCESS_KEY_ID="..."
+export AWS_SECRET_ACCESS_KEY="..."
 
-4) Migrate local state to R2:
-   ```bash
-   # NOTE: do NOT add -reconfigure here; Terraform errors if you combine it with -migrate-state.
-   terraform -chdir=terraform init -migrate-state -force-copy -backend-config=backend.r2.hcl
-   ```
+# R2 bucket region (discovered via `aws s3api head-bucket`)
+export AWS_REGION="WEUR"
+export AWS_DEFAULT_REGION="WEUR"
+```
 
-5) Re-verify no-op plan:
-   ```bash
-   terraform -chdir=terraform plan
-   ```
+3) Migrate local state to R2:
 
-References:
-- Cloudflare Terraform remote backend docs: https://developers.cloudflare.com/terraform/advanced-topics/remote-backend/
-- Cloudflare R2 pricing: https://developers.cloudflare.com/r2/pricing/
+```bash
+# NOTE: do NOT add -reconfigure here; Terraform errors if you combine it with -migrate-state.
+terraform -chdir=terraform init -migrate-state -force-copy -backend-config=backend.r2.hcl
+```
+
+4) Re-verify no-op plan:
+
+```bash
+terraform -chdir=terraform plan
+```
+

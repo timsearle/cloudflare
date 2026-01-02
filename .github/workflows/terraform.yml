@@ -5,14 +5,12 @@ on:
     types: [opened, synchronize, reopened, labeled, unlabeled]
     paths:
       - "terraform/**"
-      - "scripts/**"
       - "tests/**"
       - ".github/workflows/terraform.yml"
   push:
     branches: ["main"]
     paths:
       - "terraform/**"
-      - "scripts/**"
       - "tests/**"
       - ".github/workflows/terraform.yml"
   workflow_dispatch: {}
