@@ -2,27 +2,26 @@ export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
 
-    const res = await env.ASSETS.fetch(request);
+    // Look up content from KV store
+    const content = await env.WELL_KNOWN.get(pathname);
 
-    if (!res.ok) {
-      return res;
+    if (content === null) {
+      return new Response("Not Found", { status: 404 });
     }
 
-    const headers = new Headers(res.headers);
+    const headers = new Headers();
 
     // Diagnostic header to prove the Worker executed (can be removed once stable).
     headers.set("X-Well-Known-Worker", "1");
 
     if (pathname.startsWith("/.well-known/apple-app-site-association")) {
       headers.set("Content-Type", "application/json; charset=utf-8");
-      headers.set("Content-Disposition", "inline");
     }
 
     if (pathname.startsWith("/.well-known/atproto-did")) {
       headers.set("Content-Type", "text/plain; charset=utf-8");
-      headers.set("Content-Disposition", "inline");
     }
 
-    return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+    return new Response(content, { status: 200, headers });
   },
 };

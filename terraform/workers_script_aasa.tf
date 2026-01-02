@@ -1,7 +1,6 @@
-# Manage the existing Worker script used for AASA responses.
+# Manage the existing Worker script used for .well-known responses.
 #
-# This step removes ignore_changes, so Terraform becomes the source of truth for the script content.
-# The provider will show an in-place update (Cloudflare metadata changes) even when content is identical.
+# Serves static content from KV with correct Content-Type headers.
 
 import {
   to = cloudflare_workers_script.aasa
@@ -18,13 +17,13 @@ resource "cloudflare_workers_script" "aasa" {
 
   content_sha256 = filesha256("${path.module}/workers/empty-haze-02db.js")
 
-  assets = {
-    directory        = "${path.module}/workers/assets"
-    binding          = "ASSETS"
-    run_worker_first = true
-  }
-
-  bindings = []
+  bindings = [
+    {
+      name         = "WELL_KNOWN"
+      type         = "kv_namespace"
+      namespace_id = cloudflare_workers_kv_namespace.well_known.id
+    }
+  ]
 
   # Match the currently deployed script settings to keep this a no-op.
   compatibility_date  = "2026-01-01"
