@@ -3,10 +3,6 @@ name: Terraform (Cloudflare DNS)
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
-    paths:
-      - "terraform/**"
-      - "tests/**"
-      - ".github/workflows/terraform.yml"
   push:
     branches: ["main"]
     paths:
@@ -45,15 +41,31 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v6
+      
+      - name: Check for Terraform changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            terraform:
+              - 'terraform/**'
+
+      - name: Skip message
+        if: steps.filter.outputs.terraform != 'true'
+        run: echo "No Terraform changes detected, skipping plan."
+
       - uses: hashicorp/setup-terraform@v3
+        if: steps.filter.outputs.terraform == 'true'
         with:
           terraform_version: 1.5.7
           terraform_wrapper: false
 
       - name: Terraform fmt
+        if: steps.filter.outputs.terraform == 'true'
         run: terraform -chdir=terraform fmt -check
 
       - name: Terraform init
+        if: steps.filter.outputs.terraform == 'true'
         run: |
           terraform -chdir=terraform init \
             -reconfigure \
@@ -66,15 +78,18 @@ jobs:
             -backend-config="force_path_style=true"
 
       - name: Terraform validate
+        if: steps.filter.outputs.terraform == 'true'
         run: terraform -chdir=terraform validate
 
       - name: Terraform plan
+        if: steps.filter.outputs.terraform == 'true'
         run: |
           terraform -chdir=terraform plan -no-color -out=tfplan
           terraform -chdir=terraform show -no-color tfplan > terraform/tfplan.txt
           terraform -chdir=terraform show -json tfplan > terraform/tfplan.json
 
       - name: Detect destructive plan
+        if: steps.filter.outputs.terraform == 'true'
         run: |
           if jq -e '([.resource_changes[]?.change.actions[]] | any(. == "delete" or . == "delete_create"))' terraform/tfplan.json >/dev/null; then
             echo "DESTRUCTIVE_PLAN=true" >> "$GITHUB_ENV"
@@ -83,7 +98,7 @@ jobs:
           fi
 
       - name: Flag destructive plan (requires manual acknowledgement)
-        if: env.DESTRUCTIVE_PLAN == 'true'
+        if: steps.filter.outputs.terraform == 'true' && env.DESTRUCTIVE_PLAN == 'true'
         uses: actions/github-script@v8
         with:
           script: |
@@ -117,7 +132,7 @@ jobs:
             }
 
       - name: Require acknowledgement for destructive plan
-        if: env.DESTRUCTIVE_PLAN == 'true'
+        if: steps.filter.outputs.terraform == 'true' && env.DESTRUCTIVE_PLAN == 'true'
         uses: actions/github-script@v8
         with:
           script: |
@@ -131,6 +146,7 @@ jobs:
             }
 
       - name: Upload plan artifact
+        if: steps.filter.outputs.terraform == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: tfplan-pr-${{ github.event.pull_request.number }}
@@ -140,6 +156,7 @@ jobs:
             terraform/tfplan.json
 
       - name: Comment plan on PR
+        if: steps.filter.outputs.terraform == 'true'
         uses: actions/github-script@v8
         with:
           script: |

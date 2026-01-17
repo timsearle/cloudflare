@@ -6,9 +6,8 @@ set -euo pipefail
 echo "Testing govision.searle.dev redirect"
 
 # Test root redirect
-response=$(curl -sS -o /dev/null -w "%{http_code} %{redirect_url}" -L --max-redirs 0 "https://govision.searle.dev" 2>&1 || true)
-http_code=$(echo "$response" | awk '{print $1}')
-redirect_url=$(echo "$response" | awk '{print $2}')
+http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-redirs 0 "https://govision.searle.dev")
+redirect_url=$(curl -s -o /dev/null -w "%{redirect_url}" --max-redirs 0 "https://govision.searle.dev")
 
 if [[ "$http_code" != "301" ]]; then
   echo "Expected 301 redirect, got $http_code"
@@ -33,9 +32,8 @@ fi
 echo "Final response OK: $final_code"
 
 # Test path preservation (e.g., /privacy/ should redirect to /govision/privacy/)
-response=$(curl -sS -o /dev/null -w "%{http_code} %{redirect_url}" -L --max-redirs 0 "https://govision.searle.dev/privacy/" 2>&1 || true)
-http_code=$(echo "$response" | awk '{print $1}')
-redirect_url=$(echo "$response" | awk '{print $2}')
+http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-redirs 0 "https://govision.searle.dev/privacy/")
+redirect_url=$(curl -s -o /dev/null -w "%{redirect_url}" --max-redirs 0 "https://govision.searle.dev/privacy/")
 
 if [[ "$http_code" != "301" ]]; then
   echo "Expected 301 redirect for /privacy/, got $http_code"
