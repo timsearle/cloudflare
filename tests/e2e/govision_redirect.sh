@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Test that govision.searle.dev redirects to searle.dev/govision/
+# Test that govision.searle.dev and searle.dev/govision redirect to govision.app
 
 echo "Testing govision.searle.dev redirect"
 
@@ -14,8 +14,8 @@ if [[ "$http_code" != "301" ]]; then
   exit 1
 fi
 
-if [[ "$redirect_url" != "https://searle.dev/govision/" ]]; then
-  echo "Expected redirect to https://searle.dev/govision/, got $redirect_url"
+if [[ "$redirect_url" != "https://govision.app/" ]]; then
+  echo "Expected redirect to https://govision.app/, got $redirect_url"
   exit 1
 fi
 
@@ -31,7 +31,7 @@ fi
 
 echo "Final response OK: $final_code"
 
-# Test path preservation (e.g., /privacy/ should redirect to /govision/privacy/)
+# Test path preservation (e.g., /privacy/ should redirect to govision.app/privacy/)
 http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-redirs 0 "https://govision.searle.dev/privacy/")
 redirect_url=$(curl -s -o /dev/null -w "%{redirect_url}" --max-redirs 0 "https://govision.searle.dev/privacy/")
 
@@ -40,11 +40,45 @@ if [[ "$http_code" != "301" ]]; then
   exit 1
 fi
 
-if [[ "$redirect_url" != "https://searle.dev/govision/privacy/" ]]; then
-  echo "Expected redirect to https://searle.dev/govision/privacy/, got $redirect_url"
+if [[ "$redirect_url" != "https://govision.app/privacy/" ]]; then
+  echo "Expected redirect to https://govision.app/privacy/, got $redirect_url"
   exit 1
 fi
 
 echo "Path preservation OK: /privacy/ -> $redirect_url"
+
+# Test searle.dev/govision redirects to govision.app
+echo "Testing searle.dev/govision redirect"
+
+http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-redirs 0 "https://searle.dev/govision/")
+redirect_url=$(curl -s -o /dev/null -w "%{redirect_url}" --max-redirs 0 "https://searle.dev/govision/")
+
+if [[ "$http_code" != "301" ]]; then
+  echo "Expected 301 redirect for searle.dev/govision/, got $http_code"
+  exit 1
+fi
+
+if [[ "$redirect_url" != "https://govision.app/" ]]; then
+  echo "Expected redirect to https://govision.app/, got $redirect_url"
+  exit 1
+fi
+
+echo "searle.dev/govision/ redirect OK: $http_code -> $redirect_url"
+
+# Test searle.dev/govision/privacy/ redirects correctly
+http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-redirs 0 "https://searle.dev/govision/privacy/")
+redirect_url=$(curl -s -o /dev/null -w "%{redirect_url}" --max-redirs 0 "https://searle.dev/govision/privacy/")
+
+if [[ "$http_code" != "301" ]]; then
+  echo "Expected 301 redirect for searle.dev/govision/privacy/, got $http_code"
+  exit 1
+fi
+
+if [[ "$redirect_url" != "https://govision.app/privacy/" ]]; then
+  echo "Expected redirect to https://govision.app/privacy/, got $redirect_url"
+  exit 1
+fi
+
+echo "searle.dev/govision/privacy/ redirect OK: $http_code -> $redirect_url"
 
 echo "GoVision redirect E2E checks passed"
