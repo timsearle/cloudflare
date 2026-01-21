@@ -35,8 +35,9 @@ resource "cloudflare_ruleset" "redirects" {
           preserve_query_string = true
         }
       }
-      expression  = "(http.host eq \"searle.dev\" and starts_with(http.request.uri.path, \"/govision\"))"
-      description = "Redirect searle.dev/govision/* to govision.app/*"
+      # Skip redirect for proxy worker requests (identified by X-Govision-Proxy header)
+      expression  = "(http.host eq \"searle.dev\" and starts_with(http.request.uri.path, \"/govision\") and not any(http.request.headers[\"x-govision-proxy\"][*] eq \"1\"))"
+      description = "Redirect searle.dev/govision/* to govision.app/* (except proxy requests)"
       enabled     = true
     }
   ]

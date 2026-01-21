@@ -16,10 +16,15 @@ export default {
     }
     const targetUrl = `https://searle.dev${targetPath}${url.search}`;
     
+    // Create new headers for the origin request
+    // Add marker header so redirect rules can skip worker requests
+    const originHeaders = new Headers(request.headers);
+    originHeaders.set("X-Govision-Proxy", "1");
+    
     // Fetch from origin
     const response = await fetch(targetUrl, {
       method: request.method,
-      headers: request.headers,
+      headers: originHeaders,
       redirect: "manual",
     });
     
