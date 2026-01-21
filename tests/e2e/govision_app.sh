@@ -15,8 +15,8 @@ fi
 
 echo "Root OK: $http_code"
 
-# Test /privacy returns 200
-http_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://govision.app/privacy")
+# Test /privacy returns 200 (follow redirect for trailing slash)
+http_code=$(curl -sS -o /dev/null -w "%{http_code}" -L "https://govision.app/privacy")
 
 if [[ "$http_code" != "200" ]]; then
   echo "Expected 200 for /privacy, got $http_code"
