@@ -13,3 +13,13 @@ variable "zone_name" {
   default = "searle.dev"
 }
 
+variable "govision_app_zone_id" {
+  type    = string
+  default = "e7ac204c739a2847e78b10aed8f324fe" # govision.app
+}
+
+variable "govision_app_zone_name" {
+  type    = string
+  default = "govision.app"
+}
+
