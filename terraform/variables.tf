@@ -23,3 +23,13 @@ variable "govision_app_zone_name" {
   default = "govision.app"
 }
 
+variable "altilium_app_zone_id" {
+  type    = string
+  default = "141d321f65157c63db2f0b263a68feed" # altilium.app
+}
+
+variable "altilium_app_zone_name" {
+  type    = string
+  default = "altilium.app"
+}
+

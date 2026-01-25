@@ -39,6 +39,23 @@ resource "cloudflare_ruleset" "redirects" {
       expression  = "(http.host eq \"searle.dev\" and starts_with(http.request.uri.path, \"/govision\") and not any(http.request.headers[\"x-govision-proxy\"][*] eq \"1\"))"
       description = "Redirect searle.dev/govision/* to govision.app/* (except proxy requests)"
       enabled     = true
+    },
+    {
+      action = "redirect"
+      action_parameters = {
+        from_value = {
+          status_code = 301
+          target_url = {
+            # Strip /altilium prefix and redirect to altilium.app
+            expression = "concat(\"https://altilium.app\", substring(http.request.uri.path, 9))"
+          }
+          preserve_query_string = true
+        }
+      }
+      # Skip redirect for proxy worker requests (identified by X-Altilium-Proxy header)
+      expression  = "(http.host eq \"searle.dev\" and starts_with(http.request.uri.path, \"/altilium\") and not any(http.request.headers[\"x-altilium-proxy\"][*] eq \"1\"))"
+      description = "Redirect searle.dev/altilium/* to altilium.app/* (except proxy requests)"
+      enabled     = true
     }
   ]
 }
