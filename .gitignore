@@ -2,6 +2,7 @@
 
 # Terraform
 .terraform/
+.terraform-data/
 *.tfstate
 *.tfstate.*
 crash.log

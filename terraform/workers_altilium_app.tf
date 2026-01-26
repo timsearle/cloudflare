@@ -5,7 +5,7 @@
 # altilium.app URL in the browser.
 
 resource "cloudflare_workers_script" "altilium_app_proxy" {
-  account_id  = "acd08a5a3f8cf8ffbbd67166a949bb96"
+  account_id  = var.cloudflare_account_id
   script_name = "altilium-app-proxy"
 
   main_module  = "altilium-app-proxy.js"

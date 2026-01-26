@@ -30,7 +30,14 @@ Migrate an existing Cloudflare DNS configuration from click-ops to IaC **without
 - Always use pull requests (no direct pushes to `main`).
 - Before committing: `git status --porcelain` + `git diff` + `git diff --staged`.
 
-### 4) Change management
+### 4) Branch protection (required settings)
+The `main` branch must have these protections enabled:
+- **Require pull request reviews** before merging
+- **Require status checks to pass** before merging (at minimum: `PR Plan`)
+- **Do not allow bypassing the above settings** (even for admins)
+- **Restrict who can push** to the `main` branch
+
+### 5) Change management
 - Treat `terraform/` as the source of truth.
 - All changes go via PRs; the PR plan comment is the human review surface.
 - The CI blocks plans with deletes by default (no accidental destroy).

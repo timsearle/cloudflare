@@ -3,6 +3,12 @@ variable "cloudflare_api_token" {
   sensitive = true
 }
 
+variable "cloudflare_account_id" {
+  type        = string
+  description = "Cloudflare account ID"
+  default     = "acd08a5a3f8cf8ffbbd67166a949bb96"
+}
+
 variable "zone_id" {
   type    = string
   default = "ee4724648879ff94b352fe5587800062" # searle.dev
