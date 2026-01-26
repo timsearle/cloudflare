@@ -8,7 +8,7 @@ import {
 }
 
 resource "cloudflare_workers_script" "aasa" {
-  account_id  = "acd08a5a3f8cf8ffbbd67166a949bb96"
+  account_id  = var.cloudflare_account_id
   script_name = "empty-haze-02db"
 
   # Module-syntax worker (supports `export default`).
