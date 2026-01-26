@@ -36,5 +36,6 @@ Terraform + GitHub Actions management for Cloudflare DNS and Workers.
 
 ## Making changes
 - Edit Terraform under `terraform/`.
+- Keep local state out of the repo root (use `TF_DATA_DIR` or `scripts/set-terraform-data-dir.sh`).
 - Open a PR and review the posted plan comment.
 - Merge to `main` to apply (gated by the `cloudflare-dns` environment).

@@ -10,6 +10,12 @@ We use Cloudflare R2 (S3-compatible) for Terraform remote state.
 
 ## Local bootstrap (safe workflow)
 
+0) (Optional) Keep local state out of the repo root:
+
+```bash
+scripts/set-terraform-data-dir.sh
+```
+
 1) Create `terraform/backend.r2.hcl` from the example:
 
 ```bash
@@ -39,4 +45,3 @@ terraform -chdir=terraform init -migrate-state -force-copy -backend-config=backe
 ```bash
 terraform -chdir=terraform plan
 ```
-
