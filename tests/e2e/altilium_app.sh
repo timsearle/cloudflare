@@ -35,10 +35,15 @@ fi
 
 echo "www.altilium.app OK: $http_code"
 
-# Verify content comes from the right place (check for Altilium branding)
+# Verify content comes from the right place (check for Altilium branding and rewritten URLs)
 content=$(curl -s "https://altilium.app")
 if ! echo "$content" | grep -qi "altilium"; then
   echo "Expected page to contain 'altilium' content"
+  exit 1
+fi
+
+if ! echo "$content" | grep -q "https://altilium.app/"; then
+  echo "Expected canonical/og:url to point to https://altilium.app/"
   exit 1
 fi
 

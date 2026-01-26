@@ -35,10 +35,15 @@ fi
 
 echo "www.govision.app OK: $http_code"
 
-# Verify content comes from the right place (check for GoVision branding)
+# Verify content comes from the right place (check for GoVision branding and rewritten URLs)
 content=$(curl -s "https://govision.app")
 if ! echo "$content" | grep -qi "govision"; then
   echo "Expected page to contain 'govision' content"
+  exit 1
+fi
+
+if ! echo "$content" | grep -q "https://govision.app/"; then
+  echo "Expected canonical/og:url to point to https://govision.app/"
   exit 1
 fi
 
