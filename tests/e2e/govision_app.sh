@@ -36,7 +36,8 @@ fi
 echo "www.govision.app OK: $http_code"
 
 # Verify content comes from the right place (check for GoVision branding)
-if ! curl -sS "https://govision.app" | grep -qi "govision"; then
+content=$(curl -s "https://govision.app")
+if ! echo "$content" | grep -qi "govision"; then
   echo "Expected page to contain 'govision' content"
   exit 1
 fi

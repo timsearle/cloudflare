@@ -36,7 +36,8 @@ fi
 echo "www.altilium.app OK: $http_code"
 
 # Verify content comes from the right place (check for Altilium branding)
-if ! curl -sS "https://altilium.app" | grep -qi "altilium"; then
+content=$(curl -s "https://altilium.app")
+if ! echo "$content" | grep -qi "altilium"; then
   echo "Expected page to contain 'altilium' content"
   exit 1
 fi
