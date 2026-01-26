@@ -13,7 +13,8 @@ We use Cloudflare R2 (S3-compatible) for Terraform remote state.
 0) (Optional) Keep local state out of the repo root:
 
 ```bash
-scripts/set-terraform-data-dir.sh
+# Must be sourced (not executed) to export the variable to your shell
+. scripts/set-terraform-data-dir.sh
 ```
 
 1) Create `terraform/backend.r2.hcl` from the example:
